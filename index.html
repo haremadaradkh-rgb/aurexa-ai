@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUREXA AI | مساعدك الذكي</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0d1020;
+      color: #f7f7ff;
+    }
+    header {
+      padding: 20px;
+      border-bottom: 1px solid #292d48;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo {
+      background: linear-gradient(135deg,#a78bfa,#67e8f9);
+      color: #101226;
+      padding: 12px;
+      border-radius: 14px;
+      font-weight: bold;
+    }
+    h1 { font-size: 21px; margin: 0; }
+    header p { color: #aeb4d0; margin: 6px 0 0; font-size: 13px; }
+    main { max-width: 760px; margin: auto; padding: 25px 16px; }
+    .welcome { text-align: center; padding: 28px 0; }
+    .welcome h2 { font-size: 30px; }
+    .welcome p { color: #b9bfd8; line-height: 1.8; }
+    .tools {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 12px;
+      margin: 24px 0;
+    }
+    .tool {
+      background: #171b30;
+      border: 1px solid #303653;
+      border-radius: 15px;
+      padding: 17px;
+      color: white;
+      text-align: right;
+      cursor: pointer;
+    }
+    .tool:hover { border-color: #a78bfa; }
+    .tool strong { display: block; margin-bottom: 8px; }
+    .tool span { color: #b9bfd8; font-size: 13px; }
+    #chat {
+      background: #171b30;
+      border: 1px solid #303653;
+      border-radius: 18px;
+      padding: 16px;
+    }
+    #messages { min-height: 100px; max-height: 360px; overflow-y: auto; }
+    .message {
+      padding: 13px;
+      border-radius: 12px;
+      margin: 10px 0;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .user { background: #343054; }
+    .bot { background: #222740; }
+    textarea {
+      width: 100%;
+      min-height: 85px;
+      padding: 14px;
+      margin-top: 12px;
+      border: 1px solid #414867;
+      border-radius: 12px;
+      background: #0d1020;
+      color: white;
+      font: inherit;
+      resize: vertical;
+    }
+    .actions { display: flex; gap: 10px; margin-top: 10px; }
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 13px 18px;
+      font: inherit;
+      cursor: pointer;
+    }
+    #send { background: #a78bfa; color: #101226; flex: 1; font-weight: bold; }
+    #clear { background: #292d48; color: white; }
+    footer { text-align: center; padding: 25px; color: #858da9; font-size: 12px; }
+    @media(max-width: 420px) {
+      .welcome h2 { font-size: 25px; }
+      .tools { gap: 8px; }
+      .tool { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">A</div>
+    <div>
+      <h1>AUREXA AI</h1>
+      <p>مساحة للتعلّم والإبداع</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="welcome">
+      <h2>أهلًا بك في عالم المعرفة</h2>
+      <p>اسأل، تعلّم، اكتب، وابتكر. مساعدك الذكي للدراسة والأفكار والكتابة.</p>
+    </section>
+
+    <section class="tools">
+      <button class="tool" data-prompt="اشرح لي هذا الدرس بطريقة سهلة مع أمثلة: ">
+        <strong>📚 المساعد الدراسي</strong>
+        <span>فهم الدروس وحل المسائل</span>
+      </button>
+      <button class="tool" data-prompt="ساعدني في كتابة مقال أدبي مميز عن: ">
+        <strong>✍️ المقالات الأدبية</strong>
+        <span>أفكار ومقدمات وخواتيم</span>
+      </button>
+      <button class="tool" data-prompt="اكتب لي قصة إبداعية وممتعة عن: ">
+        <strong>📖 استوديو القصص</strong>
+        <span>اصنع قصتك الخاصة</span>
+      </button>
+      <button class="tool" data-prompt="لخّص هذا النص واشرح أهم أفكاره بطريقة سهلة: ">
+        <strong>💡 التلخيص والشرح</strong>
+        <span>معلومات واضحة ومنظمة</span>
+      </button>
+    </section>
+
+    <section id="chat">
+      <div id="messages" aria-live="polite">
+        <div class="message bot">مرحبًا! أنا AUREXA AI. اكتب سؤالك هنا لنبدأ.</div>
+      </div>
+      <textarea id="question" placeholder="اكتب سؤالك هنا..." aria-label="سؤالك"></textarea>
+      <div class="actions">
+        <button id="send">إرسال السؤال ←</button>
+        <button id="clear">محادثة جديدة</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>AUREXA AI © مساحة للتعلّم والإبداع</footer>
+
+  <script>
+    const messages = document.getElementById('messages');
+    const question = document.getElementById('question');
+
+    function addMessage(text, type) {
+      const div = document.createElement('div');
+      div.className = 'message ' + type;
+      div.textContent = text;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    document.querySelectorAll('.tool').forEach(button => {
+      button.addEventListener('click', () => {
+        question.value = button.dataset.prompt;
+        question.focus();
+      });
+    });
+
+    document.getElementById('send').addEventListener('click', () => {
+      const text = question.value.trim();
+      if (!text) {
+        question.focus();
+        return;
+      }
+      addMessage(text, 'user');
+      addMessage('واجهة AUREXA AI جاهزة! لسه لازم نربط خادم الذكاء الاصطناعي حتى أقدر أجيب إجابات حقيقية. رح نكمل الربط بالخطوة التالية.', 'bot');
+      question.value = '';
+    });
+
+    document.getElementById('clear').addEventListener('click', () => {
+      messages.replaceChildren();
+      addMessage('بدأنا محادثة جديدة. كيف أقدر أساعدك؟', 'bot');
+    });
+
+    question.addEventListener('keydown', event => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        document.getElementById('send').click();
+      }
+    });
+  </script>
+</body>
+  </html>
+          
